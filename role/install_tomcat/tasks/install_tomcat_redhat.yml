@@ -38,3 +38,9 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Levantando y habilitando servicio {{ app_name }}
+  ansible.builtin.service:
+    name: {{ app_name }}
+    state: started
+    enabled: true
