@@ -1,0 +1,40 @@
+- name: Instalando Java
+  ansible.builtin.yum:
+    name: java
+    state: present
+
+- name: Creando directorio de despliegue
+  ansible.builtin.file:
+    path: "{{ folder_tomcat }}"
+    state: directory
+
+- name: Agregar grupo tomcat
+  ansible.builtin.group:
+    name: tomcat
+
+- name: Add "tomcat" user
+  user:
+    name: tomcat
+    group: tomcat
+    system: yes
+
+- name: Descarga de archivos
+  ansible.builtin.get_url:
+    src: "{{ url_tomcat }}"
+    dest: "{{ download_tomcat_files }}"
+
+- name: Descarga de archivos a directorio creado para despliegue
+  ansible.builtin.unarchive:
+    src: "{{ download_tomcat_files }}"
+    dest: "{{ folder_tomcat }}"
+    group: tomcat
+    owner: tomcat
+    remote_host: yes
+
+- name: Copiando archivo de configuracion para {{ app_name }}
+  ansible.builtin.template:
+    src: tomcat/{{ app_name }}.conf.j2
+    dest: /etc/systemd/system/{{ app_name }}.conf
+    owner: root
+    group: root
+    mode: 0644

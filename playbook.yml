@@ -1,0 +1,5 @@
+---
+- name: Deploy Tomcat
+  hosts: all
+  role:
+    - install_tomcat
