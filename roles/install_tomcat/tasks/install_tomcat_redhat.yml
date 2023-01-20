@@ -40,12 +40,12 @@
     #validate_certs: True
     remote_src: yes
 
-#- name: Copiando archivos de Tomcat descargados
-#  ansible.posix.synchronize:
-#    src: "{{ download_tomcat_files }}"
-#    dest: "{{ folder_tomcat }}"
-#    times: no
-#  delegate_to: "{{ inventory_hostname }}"
+- name: Copiando archivos de Tomcat descargados
+  ansible.posix.synchronize:
+    src: "{{ download_tomcat_files }}"
+    dest: "{{ folder_tomcat }}"
+    times: no
+  delegate_to: "{{ inventory_hostname }}"
 
 - name: Aplicando permisos a directorio de tomcat
   ansible.builtin.file:
