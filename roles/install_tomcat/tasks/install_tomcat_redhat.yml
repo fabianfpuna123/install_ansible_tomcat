@@ -1,0 +1,85 @@
+- name: Instalando paquetes basicos
+  ansible.builtin.yum:
+    name: "{{ basic_packages }}"
+    state: present
+
+- name: Creando directorio de despliegue
+  ansible.builtin.file:
+    path: "{{ folder_tomcat }}"
+    state: directory
+
+- name: Creando directorio para descarga de archivos tomcat
+  ansible.builtin.file:
+    path: "{{ download_tomcat_files }}"
+    state: directory
+
+- name: Agregar grupo tomcat
+  ansible.builtin.group:
+    name: tomcat
+
+- name: Add "tomcat" user
+  user:
+    name: tomcat
+    group: tomcat
+    system: yes
+
+      #- name: Descarga de archivos
+      #  ansible.builtin.get_url:
+      #    url: "{{ url_tomcat }}"
+      #    dest: "{{ download_tomcat_files }}"
+      #    mode: 644 
+      #    validate_certs: False
+
+- name: Descarga de archivos a directorio creado para despliegue
+  ansible.builtin.unarchive:
+    src: "{{ url_tomcat }}"
+    dest: "{{ download_tomcat_files }}"
+    mode: 0775
+    owner: tomcat
+    group: tomcat
+    #validate_certs: True
+    remote_src: yes
+
+#- name: Copiando archivos de Tomcat descargados
+#  ansible.posix.synchronize:
+#    src: "{{ download_tomcat_files }}"
+#    dest: "{{ folder_tomcat }}"
+#    times: no
+#  delegate_to: "{{ inventory_hostname }}"
+
+- name: Aplicando permisos a directorio de tomcat
+  ansible.builtin.file:
+    dest: "{{ folder_tomcat }}"
+    owner: tomcat
+    group: tomcat
+    mode: 0775
+    recurse: yes
+
+- name: Aplicando configuracion de selinux
+  command: restorecon -vvRF "{{ folder_tomcat }}"
+
+- name: Creando enlace simbolico al directorio Tomcat
+  ansible.builtin.file:
+    src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
+    dest: /opt/tomcat/update
+    owner: tomcat
+    group: tomcat
+    mode: 0775
+    state: link 
+
+- name: Copiando archivo de configuracion para {{ app_name }}
+  ansible.builtin.template:
+    src: tomcat/{{ app_name }}.service.j2
+    dest: /etc/systemd/system/{{ app_name }}.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Levantando y habilitando servicio {{ app_name }}
+  ansible.builtin.service:
+    daemon_reload: yes
+    name: tomcat 
+    state: started
+    enabled: true
+      #when: ansible_service_mgr == "systemd"
+

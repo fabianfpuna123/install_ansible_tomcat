@@ -1,0 +1,9 @@
+---
+# vars file for role/install_tomcat
+basic_packages:
+  - java
+  - vim
+  - rsync
+  - unzip
+JAVA_HOME: /usr/lib/jvm/jre
+

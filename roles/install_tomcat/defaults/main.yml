@@ -1,0 +1,6 @@
+---
+# defaults file for role/install_tomcat
+folder_tomcat: /opt/tomcat/
+url_tomcat: https://archive.apache.org/dist/tomcat/tomcat-{{ build }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
+download_tomcat_files: /app/tomcat/
+app_name: tomcat

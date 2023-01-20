@@ -1,0 +1,22 @@
+[Unit]
+Description=Tomcat 9 servlet container
+After=network.target
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+
+
+Environment="CATALINA_BASE=/opt/tomcat/update"
+Environment="CATALINA_HOME=/opt/tomcat/update"
+Environment="CATALINA_PID=/opt/tomcat/update/temp/tomcat.pid"
+Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+
+ExecStart=/opt/tomcat/update/bin/catalina.sh start
+ExecStop=/opt/tomcat/update/bin/catalina.sh stop
+
+[Install]
+WantedBy=multi-user.target

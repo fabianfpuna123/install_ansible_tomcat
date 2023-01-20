@@ -4,4 +4,4 @@
   when: ansible_os_family  == "RedHat"
 
 - include_tasks: install_tomcat_debian.yml
-  when: ansible_os_famiyl == "Debian"
+  when: ansible_os_family == "Debian"
